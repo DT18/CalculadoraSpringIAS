@@ -1,0 +1,41 @@
+version: '3.3'
+services:
+  docker-mysql:
+   restart: always
+   container_name: docker-mysql
+   image: mysql
+   environment:
+    MYSQL_DATABASE: prueba
+    MYSQL_ROOT_PASSWORD: admin
+    MYSQL_ROOT_HOST: '%'
+   volumes:
+    - ./sql:/docker-entrypoint-initdb.d
+   ports:
+    - "6033:3306"
+    
+  docker-app:
+   restart: on-failure
+   build:
+    context: .
+    dockerfile: ./DOCKERFILE
+   expose:
+    - "8880"
+   ports:
+    - 8088:8880
+   environment:
+    WAIT_HOSTS: mysql:3306
+   depends_on:
+    - docker-mysql
+    
+  docker-front:
+    restart: on-failure
+    build:
+     context: ../Calculadora
+     dockerfile: ./DOCKERFILE
+
+    ports:
+     - 8089:80
+    environment:
+     WAIT_HOSTS: docker-app:8080
+    depends_on:
+     - docker-app  
