@@ -30,7 +30,7 @@ services:
   docker-front:
     restart: on-failure
     build:
-     context: ../Calculadora
+     context: ../calculadoraAngular
      dockerfile: ./DOCKERFILE
 
     ports:
